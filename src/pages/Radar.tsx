@@ -20,9 +20,9 @@ interface RadarProps {
   prefs: UserPreferences;
 }
 
-type QuickFilter = 'all' | 'eth' | 'bsc' | 'arb' | 'poly' | 'base';
+type QuickFilter = 'all' | 'eth' | 'sol' | 'bsc' | 'arb' | 'poly' | 'base';
 const chainFilterMap: Record<QuickFilter, Chain | null> = {
-  all: null, eth: 'ethereum', bsc: 'bsc', arb: 'arbitrum', poly: 'polygon', base: 'base',
+  all: null, eth: 'ethereum', sol: 'solana', bsc: 'bsc', arb: 'arbitrum', poly: 'polygon', base: 'base',
 };
 
 export default function Radar({ prefs }: RadarProps) {
