@@ -1,23 +1,39 @@
 import type { Token, Chain, DEX, CandleData } from './types';
 
 const SYMBOLS = [
+  // Ethereum
   { symbol: 'PEPE', name: 'Pepe', chain: 'ethereum' as Chain, dex: 'uniswap_v3' as DEX },
   { symbol: 'WOJAK', name: 'Wojak', chain: 'ethereum' as Chain, dex: 'uniswap_v2' as DEX },
-  { symbol: 'ARB', name: 'Arbitrum', chain: 'arbitrum' as Chain, dex: 'uniswap_v3' as DEX },
-  { symbol: 'CAKE', name: 'PancakeSwap', chain: 'bsc' as Chain, dex: 'pancakeswap' as DEX },
   { symbol: 'SHIB', name: 'Shiba Inu', chain: 'ethereum' as Chain, dex: 'uniswap_v2' as DEX },
-  { symbol: 'DOGE2', name: 'Doge 2.0', chain: 'bsc' as Chain, dex: 'pancakeswap' as DEX },
-  { symbol: 'MATIC', name: 'Polygon', chain: 'polygon' as Chain, dex: 'uniswap_v3' as DEX },
-  { symbol: 'FLOKI', name: 'Floki', chain: 'bsc' as Chain, dex: 'pancakeswap' as DEX },
   { symbol: 'TURBO', name: 'Turbo', chain: 'ethereum' as Chain, dex: 'uniswap_v3' as DEX },
   { symbol: 'MEME', name: 'Memecoin', chain: 'ethereum' as Chain, dex: 'uniswap_v2' as DEX },
-  { symbol: 'BONK', name: 'Bonk', chain: 'ethereum' as Chain, dex: 'uniswap_v3' as DEX },
-  { symbol: 'WIF', name: 'dogwifhat', chain: 'ethereum' as Chain, dex: 'uniswap_v3' as DEX },
+  { symbol: 'FLOKI', name: 'Floki', chain: 'ethereum' as Chain, dex: 'uniswap_v3' as DEX },
+  // Solana
+  { symbol: 'BONK', name: 'Bonk', chain: 'solana' as Chain, dex: 'raydium' as DEX },
+  { symbol: 'WIF', name: 'dogwifhat', chain: 'solana' as Chain, dex: 'jupiter' as DEX },
+  { symbol: 'POPCAT', name: 'Popcat', chain: 'solana' as Chain, dex: 'raydium' as DEX },
+  { symbol: 'MEW', name: 'cat in a dogs world', chain: 'solana' as Chain, dex: 'jupiter' as DEX },
+  { symbol: 'BOME', name: 'BOOK OF MEME', chain: 'solana' as Chain, dex: 'raydium' as DEX },
+  { symbol: 'MYRO', name: 'Myro', chain: 'solana' as Chain, dex: 'raydium' as DEX },
+  { symbol: 'SLERF', name: 'Slerf', chain: 'solana' as Chain, dex: 'jupiter' as DEX },
+  { symbol: 'MOODENG', name: 'Moo Deng', chain: 'solana' as Chain, dex: 'raydium' as DEX },
+  { symbol: 'GOAT', name: 'Goatseus Maximus', chain: 'solana' as Chain, dex: 'jupiter' as DEX },
+  { symbol: 'FARTCOIN', name: 'Fartcoin', chain: 'solana' as Chain, dex: 'raydium' as DEX },
+  { symbol: 'AI16Z', name: 'ai16z', chain: 'solana' as Chain, dex: 'jupiter' as DEX },
+  { symbol: 'PNUT', name: 'Peanut the Squirrel', chain: 'solana' as Chain, dex: 'raydium' as DEX },
+  // BSC
+  { symbol: 'CAKE', name: 'PancakeSwap', chain: 'bsc' as Chain, dex: 'pancakeswap' as DEX },
+  { symbol: 'DOGE2', name: 'Doge 2.0', chain: 'bsc' as Chain, dex: 'pancakeswap' as DEX },
+  // Arbitrum
+  { symbol: 'ARB', name: 'Arbitrum', chain: 'arbitrum' as Chain, dex: 'uniswap_v3' as DEX },
+  { symbol: 'MATIC', name: 'Polygon', chain: 'polygon' as Chain, dex: 'uniswap_v3' as DEX },
+  // Base
   { symbol: 'NEIRO', name: 'Neiro', chain: 'base' as Chain, dex: 'uniswap_v3' as DEX },
   { symbol: 'MOG', name: 'Mog Coin', chain: 'base' as Chain, dex: 'uniswap_v3' as DEX },
   { symbol: 'BRETT', name: 'Brett', chain: 'base' as Chain, dex: 'uniswap_v2' as DEX },
   { symbol: 'AERO', name: 'Aerodrome', chain: 'base' as Chain, dex: 'sushiswap' as DEX },
   { symbol: 'VIRTUAL', name: 'Virtual', chain: 'base' as Chain, dex: 'uniswap_v3' as DEX },
+  { symbol: 'TOSHI', name: 'Toshi', chain: 'base' as Chain, dex: 'uniswap_v3' as DEX },
 ];
 
 function rand(min: number, max: number) {
@@ -28,7 +44,11 @@ function randInt(min: number, max: number) {
   return Math.floor(rand(min, max));
 }
 
-function generateAddress(): string {
+function generateAddress(chain?: string): string {
+  if (chain === 'solana') {
+    const chars = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+    return Array.from({ length: 44 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+  }
   return '0x' + Array.from({ length: 40 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
 }
 
@@ -45,7 +65,7 @@ export function generateMockTokens(): Token[] {
       id: `token-${i}`,
       symbol: s.symbol,
       name: s.name,
-      address: generateAddress(),
+      address: generateAddress(s.chain),
       chain: s.chain,
       dex: s.dex,
       price,

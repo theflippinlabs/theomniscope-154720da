@@ -240,7 +240,7 @@ function scoreMarketContext(token: Token): OpportunityFactor[] {
   }
 
   // Chain bonus (established chains)
-  if (['ethereum', 'arbitrum'].includes(token.chain)) {
+  if (['ethereum', 'arbitrum', 'solana'].includes(token.chain)) {
     score += 2;
     detail += ` | ${token.chain} — established chain`;
   }

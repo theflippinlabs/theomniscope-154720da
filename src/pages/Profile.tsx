@@ -47,7 +47,7 @@ export default function Profile({ prefs, onUpdatePrefs }: ProfileProps) {
   };
   const riskIcons = { conservative: Shield, standard: Zap, aggressive: TrendingUp };
   const chainLabels: Record<Chain, string> = {
-    ethereum: 'Ethereum', bsc: 'BNB Chain', polygon: 'Polygon', arbitrum: 'Arbitrum', base: 'Base',
+    ethereum: 'Ethereum', solana: 'Solana', bsc: 'BNB Chain', polygon: 'Polygon', arbitrum: 'Arbitrum', base: 'Base',
   };
 
   return (
@@ -138,7 +138,7 @@ export default function Profile({ prefs, onUpdatePrefs }: ProfileProps) {
         <motion.section initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="gradient-card rounded-xl p-4">
           <h3 className="text-xs font-display font-semibold text-muted-foreground mb-3 uppercase tracking-wider">{t('profile.activeChains')}</h3>
           <div className="space-y-1.5">
-            {(['ethereum', 'bsc', 'polygon', 'arbitrum', 'base'] as Chain[]).map(c => (
+            {(['ethereum', 'solana', 'bsc', 'polygon', 'arbitrum', 'base'] as Chain[]).map(c => (
               <button
                 key={c}
                 onClick={() => {

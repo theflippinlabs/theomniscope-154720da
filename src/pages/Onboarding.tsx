@@ -18,6 +18,7 @@ interface OnboardingProps {
 
 const chains: { id: Chain; label: string; icon: string }[] = [
   { id: 'ethereum', label: 'Ethereum', icon: 'Ξ' },
+  { id: 'solana', label: 'Solana', icon: '◎' },
   { id: 'bsc', label: 'BNB Chain', icon: 'B' },
   { id: 'polygon', label: 'Polygon', icon: 'P' },
   { id: 'arbitrum', label: 'Arbitrum', icon: 'A' },
@@ -34,7 +35,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   const [step, setStep] = useState(0);
   const [mode, setMode] = useState<UserMode>('simple');
   const [risk, setRisk] = useState<RiskProfile>('standard');
-  const [selectedChains, setSelectedChains] = useState<Chain[]>(['ethereum', 'bsc', 'arbitrum', 'polygon', 'base']);
+  const [selectedChains, setSelectedChains] = useState<Chain[]>(['ethereum', 'solana', 'bsc', 'arbitrum', 'polygon', 'base']);
   const [alertTypes, setAlertTypes] = useState<string[]>(['signal', 'risk']);
   const { t } = useI18n();
 
