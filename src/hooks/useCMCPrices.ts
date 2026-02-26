@@ -123,8 +123,9 @@ export function useCMCPrices() {
   return useQuery({
     queryKey: ['market-prices'],
     queryFn: fetchAllPrices,
-    refetchInterval: 60_000,
-    staleTime: 30_000,
+    refetchInterval: 15_000,
+    staleTime: 10_000,
     retry: 2,
+    refetchIntervalInBackground: true,
   });
 }
