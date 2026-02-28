@@ -23,7 +23,7 @@ import {
   LineChart,
   Settings2,
   Brain,
-  Image,
+  Eye,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useMarketData } from "@/hooks/useMarketData";
@@ -40,8 +40,9 @@ import { QuickActionsWidget } from "@/components/dashboard/QuickActionsWidget";
 import { AlertsWidget } from "@/components/dashboard/AlertsWidget";
 import { AlertsWidgetExpanded } from "@/components/dashboard/AlertsWidgetExpanded";
 import { MarketChartWidget } from "@/components/dashboard/MarketChartWidget";
-import { NftSpotlightWidget } from "@/components/dashboard/NftSpotlightWidget";
 import { AiInsightWidget } from "@/components/dashboard/AiInsightWidget";
+import { ActivityWidget } from "@/components/dashboard/ActivityWidget";
+import { WatchlistWidget } from "@/components/dashboard/WatchlistWidget";
 import avatarDefault from "@/assets/avatar-default.png";
 
 // ---- Widget registry ----
@@ -107,6 +108,22 @@ const WIDGET_REGISTRY: Record<string, Omit<WidgetConfig, "id">> = {
     bgClass: "bg-widget-ai",
     component: AiInsightWidget,
   },
+  activity: {
+    title: "Pulse",
+    icon: <Activity className="w-3 h-3" />,
+    size: "sm",
+    accentColor: "hsl(var(--chart-red))",
+    bgClass: "bg-widget-activity",
+    component: ActivityWidget,
+  },
+  watchlist: {
+    title: "Watchlist",
+    icon: <Eye className="w-3 h-3" />,
+    size: "full",
+    accentColor: "hsl(var(--chart-cyan))",
+    bgClass: "bg-widget-watchlist",
+    component: WatchlistWidget,
+  },
 };
 
 const DEFAULT_WIDGET_ORDER = [
@@ -116,6 +133,8 @@ const DEFAULT_WIDGET_ORDER = [
   "marketChart",
   "alerts",
   "aiInsight",
+  "activity",
+  "watchlist",
 ];
 
 const STORAGE_KEY = "oracle-dashboard-widgets";
@@ -183,7 +202,7 @@ export default function CommandCenter() {
     hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
 
   return (
-    <div className="max-w-2xl mx-auto px-3 pt-4 pb-4 space-y-2.5">
+    <div className="max-w-2xl mx-auto px-3 pt-2 pb-2 space-y-1.5">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -8 }}
@@ -260,7 +279,7 @@ export default function CommandCenter() {
         onDragEnd={handleDragEnd}
       >
         <SortableContext items={widgetOrder} strategy={rectSortingStrategy}>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-1.5">
             {widgetOrder.map((widgetId) => {
               const config = WIDGET_REGISTRY[widgetId];
               if (!config) return null;

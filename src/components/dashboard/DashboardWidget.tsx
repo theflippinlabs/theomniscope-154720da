@@ -102,7 +102,7 @@ export function DashboardWidget({
         />
 
         {/* Header */}
-        <div className="flex items-center gap-1.5 px-3 pt-2.5 pb-1">
+        <div className="flex items-center gap-1.5 px-2.5 pt-2 pb-0.5">
           {isEditMode && (
             <button
               {...attributes}
@@ -134,7 +134,7 @@ export function DashboardWidget({
         </div>
 
         {/* Compact Content */}
-        <div className="px-3 pb-2.5">{children}</div>
+        <div className="px-2.5 pb-2">{children}</div>
 
         {/* Expanded Content */}
         <AnimatePresence>

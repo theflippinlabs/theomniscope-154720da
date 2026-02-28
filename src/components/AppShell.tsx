@@ -13,10 +13,10 @@ export function AppShell({ unreadAlerts }: AppShellProps) {
     <div className="min-h-screen bg-background gradient-hero">
       <Disclaimer />
       {/* Top search bar */}
-      <div className="sticky top-0 z-40 glass-strong border-b border-border/50 px-3 py-2">
+      <div className="sticky top-0 z-40 glass-strong border-b border-border/50 px-3 py-1.5">
         <GlobalSearch />
       </div>
-      <div className="pb-20">
+      <div className="pb-16">
         <Outlet />
       </div>
       <BottomNav unreadAlerts={unreadAlerts} />
