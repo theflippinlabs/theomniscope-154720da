@@ -24,6 +24,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Token, RiskReport, Alert, Signal, OpportunityScore } from "@/lib/types";
+import WalletActivityWidget from "@/components/WalletActivityWidget";
 
 function formatUSD(n: number): string {
   if (n >= 1e9) return `$${(n / 1e9).toFixed(1)}B`;
@@ -404,6 +405,11 @@ export default function CommandCenter() {
           )}
         </TabsContent>
       </Tabs>
+
+      {/* Live Wallet Activity */}
+      <div className="gradient-card rounded-lg p-4 border border-border">
+        <WalletActivityWidget />
+      </div>
 
       {/* Quick Actions */}
       <div className="grid grid-cols-2 gap-2.5">
