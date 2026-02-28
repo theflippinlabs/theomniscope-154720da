@@ -81,6 +81,8 @@ export default {
           market: "hsl(var(--widget-market))",
           alerts: "hsl(var(--widget-alerts))",
           ai: "hsl(var(--widget-ai))",
+          activity: "hsl(var(--widget-activity))",
+          watchlist: "hsl(var(--widget-watchlist))",
         },
       },
       borderRadius: {

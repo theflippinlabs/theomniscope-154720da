@@ -65,12 +65,14 @@
     --glow-danger: 0 80% 55%;
 
     /* Widget accent backgrounds */
-    --widget-portfolio: 215 85% 96%;
-    --widget-actions: 195 60% 95%;
-    --widget-tokens: 152 50% 95%;
-    --widget-market: 195 70% 94%;
-    --widget-alerts: 30 80% 95%;
-    --widget-ai: 270 60% 96%;
+    --widget-portfolio: 215 70% 92%;
+    --widget-actions: 180 50% 90%;
+    --widget-tokens: 145 55% 90%;
+    --widget-market: 200 55% 91%;
+    --widget-alerts: 35 85% 91%;
+    --widget-ai: 265 55% 93%;
+    --widget-activity: 320 50% 92%;
+    --widget-watchlist: 170 60% 90%;
 
     --sidebar-background: 0 0% 100%;
     --sidebar-foreground: 215 15% 40%;
@@ -129,12 +131,14 @@
     --glow-danger: 0 80% 58%;
 
     /* Widget accent backgrounds */
-    --widget-portfolio: 215 50% 12%;
-    --widget-actions: 195 40% 10%;
-    --widget-tokens: 152 35% 10%;
-    --widget-market: 195 45% 11%;
-    --widget-alerts: 30 40% 11%;
-    --widget-ai: 270 35% 12%;
+    --widget-portfolio: 215 50% 14%;
+    --widget-actions: 180 40% 12%;
+    --widget-tokens: 145 40% 12%;
+    --widget-market: 200 45% 13%;
+    --widget-alerts: 35 45% 13%;
+    --widget-ai: 265 40% 14%;
+    --widget-activity: 320 35% 13%;
+    --widget-watchlist: 170 40% 12%;
 
     --sidebar-background: 220 25% 8%;
     --sidebar-foreground: 215 15% 65%;
