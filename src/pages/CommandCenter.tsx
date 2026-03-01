@@ -168,7 +168,7 @@ export default function CommandCenter() {
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
     useSensor(TouchSensor, {
-      activationConstraint: { delay: 200, tolerance: 8 },
+      activationConstraint: { delay: 300, tolerance: 5 },
     })
   );
 
