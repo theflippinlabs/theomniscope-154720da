@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      access_events: {
+        Row: {
+          created_at: string
+          device_id: string
+          event_type: string
+          id: string
+          metadata: Json
+        }
+        Insert: {
+          created_at?: string
+          device_id: string
+          event_type: string
+          id?: string
+          metadata?: Json
+        }
+        Update: {
+          created_at?: string
+          device_id?: string
+          event_type?: string
+          id?: string
+          metadata?: Json
+        }
+        Relationships: []
+      }
       alert_rules: {
         Row: {
           chain: string
@@ -395,6 +419,44 @@ export type Database = {
         }
         Relationships: []
       }
+      credit_logs: {
+        Row: {
+          action: string
+          amount: number
+          balance_after: number
+          created_at: string
+          id: string
+          metadata: Json
+          user_access_id: string
+        }
+        Insert: {
+          action: string
+          amount: number
+          balance_after: number
+          created_at?: string
+          id?: string
+          metadata?: Json
+          user_access_id: string
+        }
+        Update: {
+          action?: string
+          amount?: number
+          balance_after?: number
+          created_at?: string
+          id?: string
+          metadata?: Json
+          user_access_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "credit_logs_user_access_id_fkey"
+            columns: ["user_access_id"]
+            isOneToOne: false
+            referencedRelation: "user_access"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invitation_codes: {
         Row: {
           code: string
@@ -462,6 +524,57 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_access: {
+        Row: {
+          access_type: string
+          created_at: string
+          credits: number
+          device_id: string
+          id: string
+          nft_verified: boolean
+          session_expires_at: string | null
+          session_token: string | null
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          subscription_expires_at: string | null
+          subscription_status: string | null
+          updated_at: string
+          wallet_address: string | null
+        }
+        Insert: {
+          access_type?: string
+          created_at?: string
+          credits?: number
+          device_id: string
+          id?: string
+          nft_verified?: boolean
+          session_expires_at?: string | null
+          session_token?: string | null
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          subscription_expires_at?: string | null
+          subscription_status?: string | null
+          updated_at?: string
+          wallet_address?: string | null
+        }
+        Update: {
+          access_type?: string
+          created_at?: string
+          credits?: number
+          device_id?: string
+          id?: string
+          nft_verified?: boolean
+          session_expires_at?: string | null
+          session_token?: string | null
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          subscription_expires_at?: string | null
+          subscription_status?: string | null
+          updated_at?: string
+          wallet_address?: string | null
+        }
+        Relationships: []
       }
       wallet_counterparties: {
         Row: {
