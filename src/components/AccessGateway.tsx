@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Wallet, CreditCard, KeyRound, Loader2, ChevronDown, Shield, Sparkles } from "lucide-react";
+import { useWeb3Modal } from "@web3modal/ethers/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAccessGateway } from "@/hooks/useAccessGateway";
@@ -10,16 +11,16 @@ import oracleLogo from "@/assets/oracle-logo.png";
 const spring = { type: "spring" as const, stiffness: 300, damping: 24 };
 
 export default function AccessGateway({ onGranted }: { onGranted: () => void }) {
+  const { open } = useWeb3Modal();
   const {
     status,
     loading,
     walletConnecting,
     checkoutLoading,
     error,
-    connectWallet,
     startCheckout,
     submitInvitationCode,
-    grantAccess,
+    isWalletConnected,
   } = useAccessGateway();
 
   const [showCodeInput, setShowCodeInput] = useState(false);
@@ -35,7 +36,6 @@ export default function AccessGateway({ onGranted }: { onGranted: () => void }) 
     setCodeLoading(false);
   };
 
-  // If access is granted, call onGranted
   if (status.hasAccess && !loading) {
     onGranted();
     return null;
@@ -56,10 +56,7 @@ export default function AccessGateway({ onGranted }: { onGranted: () => void }) 
     );
   }
 
-  // handleCodeSubmit moved above early returns
-
-  const hasWallet = !!(window as any).ethereum;
-  const walletConnected = !!status.walletAddress;
+  const walletConnected = isWalletConnected || !!status.walletAddress;
 
   return (
     <div className="min-h-screen bg-background gradient-hero flex flex-col items-center justify-center px-4 relative overflow-hidden">
@@ -127,10 +124,10 @@ export default function AccessGateway({ onGranted }: { onGranted: () => void }) 
             </motion.div>
           )}
 
-          {/* 1. Connect Wallet */}
+          {/* 1. Connect Wallet via WalletConnect */}
           <motion.div whileTap={{ scale: 0.98 }} transition={spring}>
             <Button
-              onClick={() => connectWallet()}
+              onClick={() => open()}
               disabled={walletConnecting || walletConnected}
               className="w-full h-12 bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl font-semibold text-sm gap-2 relative overflow-hidden"
             >
@@ -147,13 +144,9 @@ export default function AccessGateway({ onGranted }: { onGranted: () => void }) 
                 ? lang === "fr"
                   ? "Connexion…"
                   : "Connecting…"
-                : hasWallet
-                ? lang === "fr"
-                  ? "Connecter le Wallet"
-                  : "Connect Wallet"
                 : lang === "fr"
-                ? "Installer MetaMask"
-                : "Install MetaMask"}
+                ? "Connecter le Wallet"
+                : "Connect Wallet"}
             </Button>
           </motion.div>
 
@@ -177,8 +170,6 @@ export default function AccessGateway({ onGranted }: { onGranted: () => void }) 
             </Button>
           </motion.div>
 
-
-
           {/* Divider */}
           <div className="flex items-center gap-3 py-1">
             <div className="flex-1 h-px bg-border/30" />
@@ -188,7 +179,7 @@ export default function AccessGateway({ onGranted }: { onGranted: () => void }) 
             <div className="flex-1 h-px bg-border/30" />
           </div>
 
-          {/* 4. Invitation Code (fallback) */}
+          {/* Invitation Code (fallback) */}
           <div>
             <button
               onClick={() => setShowCodeInput(!showCodeInput)}
