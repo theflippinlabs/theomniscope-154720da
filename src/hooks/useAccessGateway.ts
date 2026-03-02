@@ -1,4 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
+import { useWeb3ModalAccount, useWeb3ModalProvider } from "@web3modal/ethers/react";
+import { BrowserProvider } from "ethers";
 import { supabase } from "@/integrations/supabase/client";
 
 const SESSION_KEY = "oracle_session_token";
@@ -21,10 +23,6 @@ function setSessionToken(token: string) {
   localStorage.setItem(SESSION_KEY, token);
 }
 
-function clearSession() {
-  localStorage.removeItem(SESSION_KEY);
-}
-
 export type AccessType = "none" | "nft" | "subscription" | "credits" | "invitation";
 
 export interface AccessStatus {
@@ -37,6 +35,9 @@ export interface AccessStatus {
 }
 
 export function useAccessGateway() {
+  const { address, isConnected, chainId } = useWeb3ModalAccount();
+  const { walletProvider } = useWeb3ModalProvider();
+
   const [status, setStatus] = useState<AccessStatus>({
     hasAccess: false,
     accessType: "none",
@@ -50,6 +51,7 @@ export function useAccessGateway() {
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Check existing session on mount
   const checkStatus = useCallback(async () => {
     try {
       const sessionToken = getSessionToken();
@@ -82,57 +84,44 @@ export function useAccessGateway() {
 
   useEffect(() => {
     checkStatus();
-
-    // Check for payment success in URL
     const params = new URLSearchParams(window.location.search);
     if (params.get("payment") === "success") {
-      // Clean URL and recheck after a short delay (webhook processing)
       window.history.replaceState({}, "", window.location.pathname);
       setTimeout(checkStatus, 3000);
     }
   }, [checkStatus]);
 
-  const connectWallet = useCallback(async (chainId?: number) => {
+  // When WalletConnect connects, authenticate with backend
+  useEffect(() => {
+    if (isConnected && address && walletProvider && !status.walletAddress) {
+      authenticateWallet(address, chainId || 1);
+    }
+  }, [isConnected, address, walletProvider]);
+
+  const authenticateWallet = useCallback(async (walletAddress: string, chain: number) => {
     setWalletConnecting(true);
     setError(null);
 
     try {
-      const ethereum = (window as any).ethereum;
-      if (!ethereum) {
-        setError("No wallet detected. Install MetaMask or use a Web3 browser.");
+      if (!walletProvider) {
+        setError("Wallet provider not available.");
         return;
       }
 
-      // Request account access
-      const accounts: string[] = await ethereum.request({ method: "eth_requestAccounts" });
-      if (!accounts || accounts.length === 0) {
-        setError("Wallet connection rejected.");
-        return;
-      }
-
-      const address = accounts[0];
+      const provider = new BrowserProvider(walletProvider);
+      const signer = await provider.getSigner();
       const deviceId = getDeviceId();
 
-      // Create sign message
       const message = `Sign this message to access Oracle System.\n\nDevice: ${deviceId}\nTimestamp: ${Date.now()}`;
+      const signature = await signer.signMessage(message);
 
-      // Request signature
-      const signature: string = await ethereum.request({
-        method: "personal_sign",
-        params: [message, address],
-      });
-
-      // Get current chain ID
-      const currentChainId = chainId || parseInt(await ethereum.request({ method: "eth_chainId" }), 16);
-
-      // Send to backend
       const { data, error: fnError } = await supabase.functions.invoke("access-wallet-auth", {
         body: {
-          wallet_address: address,
+          wallet_address: walletAddress,
           signature,
           message,
           device_id: deviceId,
-          chain_id: currentChainId,
+          chain_id: chain,
         },
       });
 
@@ -147,23 +136,23 @@ export function useAccessGateway() {
         accessType: data?.access_type || "none",
         credits: data?.credits || 0,
         nftVerified: data?.nft_verified || false,
-        walletAddress: data?.wallet_address || address,
+        walletAddress: data?.wallet_address || walletAddress,
         subscriptionStatus: null,
       });
 
       if (!data?.has_access) {
-        setError(null); // Clear error — wallet connected but no access yet
+        setError(null);
       }
     } catch (err: any) {
-      if (err?.code === 4001) {
-        setError("Connection rejected by user.");
+      if (err?.code === "ACTION_REJECTED" || err?.code === 4001) {
+        setError("Signature rejected by user.");
       } else {
-        setError(err?.message || "Wallet connection failed.");
+        setError(err?.message || "Wallet authentication failed.");
       }
     } finally {
       setWalletConnecting(false);
     }
-  }, []);
+  }, [walletProvider]);
 
   const startCheckout = useCallback(async () => {
     setCheckoutLoading(true);
@@ -192,33 +181,6 @@ export function useAccessGateway() {
       setCheckoutLoading(false);
     }
   }, [status.walletAddress]);
-
-  const useCredits = useCallback(async (amount = 1) => {
-    setError(null);
-    try {
-      const sessionToken = getSessionToken();
-      const deviceId = getDeviceId();
-
-      const { data, error: fnError } = await supabase.functions.invoke("access-use-credit", {
-        body: { session_token: sessionToken, device_id: deviceId, amount },
-      });
-
-      if (fnError) throw fnError;
-
-      if (data?.success) {
-        setStatus((prev) => ({
-          ...prev,
-          hasAccess: true,
-          accessType: "credits",
-          credits: data.credits,
-        }));
-      } else {
-        setError(data?.error || "Failed to use credits.");
-      }
-    } catch (err: any) {
-      setError(err?.message || "Credit usage failed.");
-    }
-  }, []);
 
   // Legacy invitation code support
   const submitInvitationCode = useCallback(async (code: string) => {
@@ -252,7 +214,6 @@ export function useAccessGateway() {
           .eq("id", invitation.id);
       }
 
-      // Create/update user_access
       const { data: existing } = await supabase
         .from("user_access")
         .select("id")
@@ -283,7 +244,6 @@ export function useAccessGateway() {
 
       setSessionToken(sessionToken);
 
-      // Log analytics
       await supabase.from("access_events").insert({
         device_id: deviceId,
         event_type: "invitation_code",
@@ -308,11 +268,11 @@ export function useAccessGateway() {
     walletConnecting,
     checkoutLoading,
     error,
-    connectWallet,
     startCheckout,
-    useCredits,
     submitInvitationCode,
     grantAccess,
     checkStatus,
+    isWalletConnected: isConnected,
+    walletAddress: address,
   };
 }

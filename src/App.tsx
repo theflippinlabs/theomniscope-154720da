@@ -8,6 +8,7 @@ import { useUserPreferences } from "@/lib/userPreferences";
 import { useMarketData } from "@/hooks/useMarketData";
 import { AppShell } from "@/components/AppShell";
 import { I18nProvider } from "@/lib/i18n";
+import "@/lib/web3modal"; // Initialize Web3Modal
 import AccessGateway from "@/components/AccessGateway";
 import Onboarding from "@/pages/Onboarding";
 import Radar from "@/pages/Radar";
