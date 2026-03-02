@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Wallet, CreditCard, Coins, KeyRound, Loader2, ChevronDown, Shield, Sparkles } from "lucide-react";
+import { Wallet, Coins, KeyRound, Loader2, ChevronDown, Shield, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAccessGateway } from "@/hooks/useAccessGateway";
@@ -14,10 +14,10 @@ export default function AccessGateway({ onGranted }: { onGranted: () => void }) 
     status,
     loading,
     walletConnecting,
-    checkoutLoading,
+    checkoutLoading: _checkoutLoading,
     error,
     connectWallet,
-    startCheckout,
+    startCheckout: _startCheckout,
     useCredits,
     submitInvitationCode,
     grantAccess,
@@ -158,25 +158,8 @@ export default function AccessGateway({ onGranted }: { onGranted: () => void }) 
             </Button>
           </motion.div>
 
-          {/* 2. Subscribe Weekly */}
-          <motion.div whileTap={{ scale: 0.98 }} transition={spring}>
-            <Button
-              onClick={startCheckout}
-              disabled={checkoutLoading}
-              variant="outline"
-              className="w-full h-12 rounded-xl font-semibold text-sm gap-2 border-white/[0.08] bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/[0.12]"
-            >
-              {checkoutLoading ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <CreditCard className="w-4 h-4 text-cyan-400" />
-              )}
-              <span>
-                {lang === "fr" ? "Abonnement Hebdo" : "Subscribe Weekly"}
-              </span>
-              <span className="ml-auto text-xs text-muted-foreground">$9.99/wk</span>
-            </Button>
-          </motion.div>
+
+
 
           {/* 3. Use Credits */}
           {status.credits > 0 && (
