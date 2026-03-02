@@ -1,36 +1,26 @@
-import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Eye, Shield, BookOpen, Network, Zap,
-  List, ShieldCheck, BarChart3
+  Eye, BookOpen, Network, Zap,
+  List, ShieldCheck, BarChart3,
 } from "lucide-react";
 import {
   Sheet, SheetContent, SheetHeader, SheetTitle,
 } from "@/components/ui/sheet";
 import { useAdminStatus } from "@/hooks/useAdminStatus";
+import { motion } from "framer-motion";
 
 interface MoreSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-const sections = [
-  {
-    title: "Monitoring",
-    items: [
-      { icon: Eye, label: "Watchlists", path: "/watchlists", desc: "Track wallets & tokens" },
-      { icon: Zap, label: "Alert Rules", path: "/alert-rules", desc: "Custom notifications" },
-      { icon: List, label: "Radar", path: "/radar", desc: "Live market feed" },
-    ],
-  },
-  {
-    title: "Analysis",
-    items: [
-      { icon: Network, label: "Clusters", path: "/intel", desc: "On-chain intelligence" },
-      { icon: BarChart3, label: "Opportunities", path: "/opportunities", desc: "Scored setups" },
-      { icon: BookOpen, label: "New Listings", path: "/new-listings", desc: "Fresh tokens" },
-    ],
-  },
+const hubItems = [
+  { icon: Eye, label: "Watchlists", path: "/watchlists", color: "from-blue-500/20 to-blue-600/5", iconColor: "text-blue-500" },
+  { icon: Zap, label: "Alert Rules", path: "/alert-rules", color: "from-amber-500/20 to-amber-600/5", iconColor: "text-amber-500" },
+  { icon: List, label: "Radar", path: "/radar", color: "from-emerald-500/20 to-emerald-600/5", iconColor: "text-emerald-500" },
+  { icon: Network, label: "Clusters", path: "/intel", color: "from-violet-500/20 to-violet-600/5", iconColor: "text-violet-500" },
+  { icon: BarChart3, label: "Opportunities", path: "/opportunities", color: "from-cyan-500/20 to-cyan-600/5", iconColor: "text-cyan-500" },
+  { icon: BookOpen, label: "New Listings", path: "/new-listings", color: "from-rose-500/20 to-rose-600/5", iconColor: "text-rose-500" },
 ];
 
 export function MoreSheet({ open, onOpenChange }: MoreSheetProps) {
@@ -44,49 +34,50 @@ export function MoreSheet({ open, onOpenChange }: MoreSheetProps) {
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" className="rounded-t-2xl max-h-[75vh] px-4 pb-6">
-        <SheetHeader className="pb-2">
-          <SheetTitle className="text-sm font-display tracking-wide flex items-center gap-2">
-            <Shield className="w-4 h-4 text-primary" />
-            Hub
-          </SheetTitle>
+      <SheetContent side="bottom" className="rounded-t-2xl max-h-[70vh] px-4 pb-6">
+        <SheetHeader className="pb-3">
+          <SheetTitle className="text-sm font-display tracking-wide">Hub</SheetTitle>
         </SheetHeader>
 
-        <div className="grid grid-cols-2 gap-2">
-          {sections.flatMap((s) => s.items).map((item) => (
-            <button
+        <div className="grid grid-cols-3 gap-2">
+          {hubItems.map((item, idx) => (
+            <motion.button
               key={item.path}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: idx * 0.03, type: "spring", stiffness: 400, damping: 25 }}
               onClick={() => go(item.path)}
-              className="flex flex-col items-center gap-1.5 p-3 rounded-xl border border-border/60 bg-muted/40 hover:bg-accent/60 transition-colors text-center"
+              className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border border-border/40 bg-gradient-to-b ${item.color} hover:scale-[1.03] active:scale-[0.97] transition-transform`}
             >
-              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                <item.icon className="w-5 h-5 text-primary" />
+              <div className="w-9 h-9 rounded-xl bg-background/60 backdrop-blur-sm flex items-center justify-center shadow-sm">
+                <item.icon className={`w-4.5 h-4.5 ${item.iconColor}`} />
               </div>
-              <p className="text-xs font-medium text-foreground">{item.label}</p>
-              <p className="text-[10px] text-muted-foreground leading-tight">{item.desc}</p>
-            </button>
+              <p className="text-[11px] font-medium text-foreground leading-tight">{item.label}</p>
+            </motion.button>
           ))}
-
-          {isAdmin && (
-            <div>
-              <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mb-2 px-1">
-                Admin
-              </p>
-              <button
-                onClick={() => go("/admin")}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-primary/10 transition-colors text-left w-full"
-              >
-                <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                  <ShieldCheck className="w-4 h-4 text-primary" />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-xs font-medium text-primary">Admin Panel</p>
-                  <p className="text-[10px] text-muted-foreground">Manage codes & users</p>
-                </div>
-              </button>
-            </div>
-          )}
         </div>
+
+        {isAdmin && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="mt-3"
+          >
+            <button
+              onClick={() => go("/admin")}
+              className="w-full flex items-center gap-3 p-3 rounded-xl border border-primary/20 bg-gradient-to-r from-primary/10 to-primary/5 hover:from-primary/15 transition-all active:scale-[0.98]"
+            >
+              <div className="w-9 h-9 rounded-xl bg-primary/15 flex items-center justify-center">
+                <ShieldCheck className="w-4.5 h-4.5 text-primary" />
+              </div>
+              <div className="text-left">
+                <p className="text-xs font-semibold text-primary">Admin Panel</p>
+                <p className="text-[10px] text-muted-foreground">Manage codes & system</p>
+              </div>
+            </button>
+          </motion.div>
+        )}
       </SheetContent>
     </Sheet>
   );
